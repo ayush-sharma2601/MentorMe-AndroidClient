@@ -1,8 +1,10 @@
-package com.example.mentorme;
+package com.example.mentorme.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import com.example.mentorme.R;
 
 public class MainActivity extends AppCompatActivity {
 
