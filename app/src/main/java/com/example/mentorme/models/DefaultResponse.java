@@ -1,32 +1,29 @@
 package com.example.mentorme.models;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 public class DefaultResponse {
 
-    private String success;
+    @SerializedName("success")
+    @Expose
+    private Boolean success;
+    @SerializedName("userId")
+    @Expose
+    private String userId;
+    @SerializedName("authToken")
+    @Expose
+    private String authToken;
+    @SerializedName("msg")
+    @Expose
     private String msg;
-    private String userId,authToken;
 
-    public DefaultResponse(String success, String msg, String userId, String authToken) {
-        this.success = success;
-        this.msg = msg;
-        this.userId = userId;
-        this.authToken = authToken;
-    }
-
-    public String getSuccess() {
+    public Boolean getSuccess() {
         return success;
     }
 
-    public void setSuccess(String success) {
+    public void setSuccess(Boolean success) {
         this.success = success;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
     }
 
     public String getUserId() {
@@ -44,4 +41,13 @@ public class DefaultResponse {
     public void setAuthToken(String authToken) {
         this.authToken = authToken;
     }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
+
 }
