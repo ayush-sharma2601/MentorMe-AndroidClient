@@ -12,7 +12,7 @@ public interface Api {
 
     @FormUrlEncoded
     @POST("/api/mentee/register")
-    Call<DefaultResponse> createUser(
+    Call<DefaultResponse> createMentee(
             @Field("name") String name,
             @Field("email") String email,
             @Field("password") String password
@@ -20,7 +20,22 @@ public interface Api {
 
     @FormUrlEncoded
     @POST("/api/mentee/login")
-    Call<LoginResponse> userLogin(
+    Call<LoginResponse> menteeLogin(
+            @Field("email") String email,
+            @Field("password") String password
+    );
+
+    @FormUrlEncoded
+    @POST("/api/mentor/register")
+    Call<DefaultResponse> createMentor(
+            @Field("name") String name,
+            @Field("email") String email,
+            @Field("password") String password
+    );
+
+    @FormUrlEncoded
+    @POST("/api/mentor/login")
+    Call<LoginResponse> mentorLogin(
             @Field("email") String email,
             @Field("password") String password
     );

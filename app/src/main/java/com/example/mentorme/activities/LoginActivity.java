@@ -21,6 +21,8 @@ import retrofit2.Response;
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     private EditText editTextEmail, editTextPassword;
+    private String roleSelected;
+    private Call<LoginResponse> call;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -32,6 +34,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         findViewById(R.id.buttonLogin).setOnClickListener(this);
         findViewById(R.id.textViewSignUp).setOnClickListener(this);
+
+        roleSelected = getIntent().getStringExtra("roleSelected");
     }
 
     @Override
@@ -41,7 +45,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 userLogin();
                 break;
             case R.id.textViewSignUp:
-                startActivity(new Intent(this, SignUpActivity.class));
+                Intent intent = new Intent(this,SignUpActivity.class);
+                intent.putExtra("roleSelected",roleSelected);
+                startActivity(intent);
                 break;
         }
     }
@@ -74,23 +80,30 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             return;
         }
 
-        Call<LoginResponse> call = RetrofitClient
-                .getInstance().getApi().userLogin(email, password);
+        if (roleSelected.equals("mentee")) {
+            call = RetrofitClient
+                    .getInstance().getApi().menteeLogin(email, password);
+        }
+        else
+        {
+            call = RetrofitClient
+                    .getInstance().getApi().mentorLogin(email, password);
+        }
 
         call.enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                 LoginResponse loginResponse = response.body();
                 if (response.code() == 200) {
-                    if (loginResponse.getSuccess().equals("true")) {
+                    if (loginResponse.getSuccess() == true) {
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         intent.putExtra("usedId", loginResponse.getUserId());
                         intent.putExtra("authToken", loginResponse.getAuthToken());
                         startActivity(intent);
+                        finish();
                     } else
                         Toast.makeText(LoginActivity.this, loginResponse.getMsg(), Toast.LENGTH_SHORT).show();
-                }
-                else
+                } else
                     Toast.makeText(LoginActivity.this, "Unknown error\nTry again", Toast.LENGTH_SHORT).show();
             }
 
