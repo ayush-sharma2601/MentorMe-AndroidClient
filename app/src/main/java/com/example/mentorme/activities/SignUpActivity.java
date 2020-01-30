@@ -37,7 +37,6 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         editTextPassword = findViewById(R.id.editTextPassword);
 
         findViewById(R.id.buttonSignUp).setOnClickListener(this);
-        findViewById(R.id.buttonGoogleSignUp).setOnClickListener(this);
         findViewById(R.id.textViewLogin).setOnClickListener(this);
 
         progressDialog = new ProgressDialog(SignUpActivity.this);
@@ -53,12 +52,10 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                 break;
 
             case R.id.textViewLogin:
-                Intent intent = new Intent(this,LoginActivity.class);
-                intent.putExtra("roleSelected",roleSelected);
+                Intent intent = new Intent(this, LoginActivity.class);
+                intent.putExtra("roleSelected", roleSelected);
                 startActivity(intent);
                 break;
-            case R.id.buttonGoogleSignUp:
-                Toast.makeText(this, "Coming soon.", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -120,11 +117,20 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                 if (response.code() == 200) {
                     DefaultResponse defaultResponse = response.body();
                     if (defaultResponse.getSuccess() == true) {
-                        Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
-                        intent.putExtra("userId", defaultResponse.getUserId());
-                        intent.putExtra("authToken", defaultResponse.getAuthToken());
-                        startActivity(intent);
-                        finish();
+                        if (roleSelected.equals("mentee")) {
+                            Intent intent = new Intent(SignUpActivity.this, MenteeDashboardActivity.class);
+                            intent.putExtra("usedId", defaultResponse.getUserId());
+                            intent.putExtra("authToken", defaultResponse.getAuthToken());
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            Toast.makeText(SignUpActivity.this, defaultResponse.getMsg() + "\nComing soon.", Toast.LENGTH_SHORT).show();
+                            /*Intent intent = new Intent(LoginActivity.this, MentorDashboardActivity.class);
+                            intent.putExtra("usedId", loginResponse.getUserId());
+                            intent.putExtra("authToken", loginResponse.getAuthToken());
+                            startActivity(intent);
+                            finish();*/
+                        }
                     } else
                         Toast.makeText(SignUpActivity.this, defaultResponse.getMsg(), Toast.LENGTH_SHORT).show();
                 } else
