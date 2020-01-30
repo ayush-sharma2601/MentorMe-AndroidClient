@@ -1,36 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center">
+    android:background="@color/colorLoginPrimaryDark"
+    tools:context="com.example.mentorme.activities.LoginActivity">
 
-    <EditText
-        android:id="@+id/editTextEmail"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:hint="Email"
-        android:inputType="textEmailAddress"/>
+        android:layout_gravity="center">
 
-
-    <EditText
-        android:id="@+id/editTextPassword"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:hint="Password"
-        android:inputType="textPassword"/>
-
-    <Button
-        android:id="@+id/buttonLogin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Login" />
-
-    <TextView
-        android:id="@+id/textViewSignUp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="New user?\nClick here to Sign Up." />
-
+        <include layout="@layout/layout_login" />
+    </ScrollView>
 </LinearLayout>

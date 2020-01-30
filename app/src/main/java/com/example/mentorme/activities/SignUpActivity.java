@@ -1,5 +1,6 @@
 package com.example.mentorme.activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
@@ -22,6 +23,7 @@ import retrofit2.Response;
 public class SignUpActivity extends AppCompatActivity implements View.OnClickListener {
 
     private EditText editTextName, editTextEmail, editTextPassword;
+    private ProgressDialog progressDialog;
     private String roleSelected;
     private Call<DefaultResponse> call;
 
@@ -35,7 +37,10 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         editTextPassword = findViewById(R.id.editTextPassword);
 
         findViewById(R.id.buttonSignUp).setOnClickListener(this);
+        findViewById(R.id.buttonGoogleSignUp).setOnClickListener(this);
         findViewById(R.id.textViewLogin).setOnClickListener(this);
+
+        progressDialog = new ProgressDialog(SignUpActivity.this);
 
         roleSelected = getIntent().getStringExtra("roleSelected");
     }
@@ -52,6 +57,8 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                 intent.putExtra("roleSelected",roleSelected);
                 startActivity(intent);
                 break;
+            case R.id.buttonGoogleSignUp:
+                Toast.makeText(this, "Coming soon.", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -90,6 +97,9 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             return;
         }
 
+        progressDialog.setMessage("Signing Up...");
+        progressDialog.show();
+
         if (roleSelected.equals("mentee")) {
             call = RetrofitClient
                     .getInstance()
@@ -105,6 +115,8 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         call.enqueue(new Callback<DefaultResponse>() {
             @Override
             public void onResponse(Call<DefaultResponse> call, Response<DefaultResponse> response) {
+                progressDialog.dismiss();
+
                 if (response.code() == 200) {
                     DefaultResponse defaultResponse = response.body();
                     if (defaultResponse.getSuccess() == true) {
@@ -121,6 +133,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
             @Override
             public void onFailure(Call<DefaultResponse> call, Throwable t) {
+                progressDialog.dismiss();
                 Toast.makeText(SignUpActivity.this, "Connection error\nTry again", Toast.LENGTH_SHORT).show();
             }
         });

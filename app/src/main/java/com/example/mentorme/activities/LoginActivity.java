@@ -1,10 +1,12 @@
 package com.example.mentorme.activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -21,6 +23,7 @@ import retrofit2.Response;
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     private EditText editTextEmail, editTextPassword;
+    private ProgressDialog progressDialog;
     private String roleSelected;
     private Call<LoginResponse> call;
 
@@ -33,7 +36,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         editTextPassword = findViewById(R.id.editTextPassword);
 
         findViewById(R.id.buttonLogin).setOnClickListener(this);
+        findViewById(R.id.buttonGoogleSignIn).setOnClickListener(this);
         findViewById(R.id.textViewSignUp).setOnClickListener(this);
+
+        progressDialog = new ProgressDialog(LoginActivity.this);
 
         roleSelected = getIntent().getStringExtra("roleSelected");
     }
@@ -45,16 +51,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 userLogin();
                 break;
             case R.id.textViewSignUp:
-                Intent intent = new Intent(this,SignUpActivity.class);
-                intent.putExtra("roleSelected",roleSelected);
+                Intent intent = new Intent(this, SignUpActivity.class);
+                intent.putExtra("roleSelected", roleSelected);
                 startActivity(intent);
+                break;
+            case R.id.buttonGoogleSignIn:
+                Toast.makeText(this, "Coming soon.", Toast.LENGTH_SHORT).show();
                 break;
         }
     }
 
     private void userLogin() {
         String email = editTextEmail.getText().toString().trim();
-        String password = editTextPassword.getText().toString().trim();
+        final String password = editTextPassword.getText().toString().trim();
 
         if (email.isEmpty()) {
             editTextEmail.setError("Email is required");
@@ -80,12 +89,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             return;
         }
 
+        progressDialog.setMessage("Logging in...");
+        progressDialog.show();
+
         if (roleSelected.equals("mentee")) {
             call = RetrofitClient
                     .getInstance().getApi().menteeLogin(email, password);
-        }
-        else
-        {
+        } else {
             call = RetrofitClient
                     .getInstance().getApi().mentorLogin(email, password);
         }
@@ -93,6 +103,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         call.enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+                progressDialog.dismiss();
+
                 LoginResponse loginResponse = response.body();
                 if (response.code() == 200) {
                     if (loginResponse.getSuccess() == true) {
@@ -109,6 +121,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             @Override
             public void onFailure(Call<LoginResponse> call, Throwable t) {
+                progressDialog.dismiss();
                 Toast.makeText(LoginActivity.this, "Connection error\nTry again", Toast.LENGTH_SHORT).show();
             }
         });
