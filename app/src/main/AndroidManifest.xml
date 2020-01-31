@@ -12,9 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity
-            android:name=".activities.RoleSelectionActivity"
-            android:theme="@style/StandardTheme">
+        <activity android:name=".activities.MenteeDashboardActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,8 +26,6 @@
         <activity
             android:name=".activities.SignUpActivity"
             android:theme="@style/StandardTheme" />
-
-        <activity android:name=".activities.MenteeDashboardActivity" />
     </application>
 
 </manifest>
