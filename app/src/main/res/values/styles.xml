@@ -39,4 +39,9 @@
         <item name="android:textSize">@dimen/newsMoreTextSize</item>
     </style>
 
+    <style name="NDItemFontStyle" parent="android:Widget.TextView">
+        <item name="android:fontFamily">serif-monospace</item>
+        <item name="android:textSize">20dp</item>
+    </style>
+
 </resources>
