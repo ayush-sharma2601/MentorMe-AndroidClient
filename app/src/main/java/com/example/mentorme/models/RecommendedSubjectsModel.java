@@ -3,10 +3,12 @@ package com.example.mentorme.models;
 public class RecommendedSubjectsModel {
     private String subjectName;
     private String subjectDescription;
+    private int key;
 
-    public RecommendedSubjectsModel(String subjectName, String subjectDescription) {
+    public RecommendedSubjectsModel(String subjectName, String subjectDescription, int key) {
         this.subjectName = subjectName;
         this.subjectDescription = subjectDescription;
+        this.key = key;
     }
 
     public String getSubjectDescription() {
@@ -23,5 +25,13 @@ public class RecommendedSubjectsModel {
 
     public void setSubjectName(String subjectName) {
         this.subjectName = subjectName;
+    }
+
+    public int getKey() {
+        return key;
+    }
+
+    public void setKey(int key) {
+        this.key = key;
     }
 }

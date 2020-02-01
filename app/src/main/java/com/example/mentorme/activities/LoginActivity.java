@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mentorme.R;
+import com.example.mentorme.SessionManager;
 import com.example.mentorme.api.RetrofitClient;
 import com.example.mentorme.models.LoginResponse;
 
@@ -21,9 +22,11 @@ import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private SessionManager sessionManager;
+
     private EditText editTextEmail, editTextPassword;
     private ProgressDialog progressDialog;
-    private String roleSelected;
+
     private Call<LoginResponse> call;
 
     @Override
@@ -37,9 +40,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         findViewById(R.id.buttonLogin).setOnClickListener(this);
         findViewById(R.id.textViewSignUp).setOnClickListener(this);
 
-        progressDialog = new ProgressDialog(LoginActivity.this);
+        sessionManager = new SessionManager(this);
 
-        roleSelected = getIntent().getStringExtra("roleSelected");
+        progressDialog = new ProgressDialog(this);
+    }
+
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(this,RoleSelectionActivity.class));
     }
 
     @Override
@@ -50,7 +58,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 break;
             case R.id.textViewSignUp:
                 Intent intent = new Intent(this, SignUpActivity.class);
-                intent.putExtra("roleSelected", roleSelected);
                 startActivity(intent);
                 break;
         }
@@ -87,13 +94,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         progressDialog.setMessage("Logging in...");
         progressDialog.show();
 
-        if (roleSelected.equals("mentee")) {
+        if (sessionManager.getRoleSelected().equals("mentee")) {
             call = RetrofitClient
                     .getInstance().getApi().menteeLogin(email, password);
         } else {
             call = RetrofitClient
                     .getInstance().getApi().mentorLogin(email, password);
         }
+
+        sessionManager.setEmail(email);
 
         call.enqueue(new Callback<LoginResponse>() {
             @Override
@@ -102,20 +111,21 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                 LoginResponse loginResponse = response.body();
                 if (response.code() == 200) {
-                    if (loginResponse.getSuccess() == true) {
-                        if (roleSelected.equals("mentee")) {
+                    if (loginResponse.getSuccess()) {
+                        if (sessionManager.getRoleSelected().equals("mentee")) {
+                            sessionManager.setUserId(loginResponse.getUserId());
+                            sessionManager.setAuthToken(loginResponse.getAuthToken());
+                            sessionManager.setLogInStatus(true);
                             Intent intent = new Intent(LoginActivity.this, MenteeDashboardActivity.class);
-                            intent.putExtra("usedId", loginResponse.getUserId());
-                            intent.putExtra("authToken", loginResponse.getAuthToken());
                             startActivity(intent);
                             finish();
                         } else {
-                            Toast.makeText(LoginActivity.this, loginResponse.getMsg()+"\nComing soon.", Toast.LENGTH_SHORT).show();
-                            /*Intent intent = new Intent(LoginActivity.this, MentorDashboardActivity.class);
-                            intent.putExtra("usedId", loginResponse.getUserId());
-                            intent.putExtra("authToken", loginResponse.getAuthToken());
+                            sessionManager.setUserId(loginResponse.getUserId());
+                            sessionManager.setAuthToken(loginResponse.getAuthToken());
+                            sessionManager.setLogInStatus(true);
+                            Intent intent = new Intent(LoginActivity.this, FragmentContainerActivity.class);
                             startActivity(intent);
-                            finish();*/
+                            finish();
                         }
                     } else
                         Toast.makeText(LoginActivity.this, loginResponse.getMsg(), Toast.LENGTH_SHORT).show();

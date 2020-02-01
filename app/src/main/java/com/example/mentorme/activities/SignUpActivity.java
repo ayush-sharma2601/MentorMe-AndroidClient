@@ -6,15 +6,15 @@ import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mentorme.R;
+import com.example.mentorme.SessionManager;
 import com.example.mentorme.api.RetrofitClient;
-import com.example.mentorme.models.DefaultResponse;
+import com.example.mentorme.models.SignUpResponse;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -22,10 +22,12 @@ import retrofit2.Response;
 
 public class SignUpActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private SessionManager sessionManager;
+
     private EditText editTextName, editTextEmail, editTextPassword;
     private ProgressDialog progressDialog;
-    private String roleSelected;
-    private Call<DefaultResponse> call;
+
+    private Call<SignUpResponse> call;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -39,9 +41,15 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         findViewById(R.id.buttonSignUp).setOnClickListener(this);
         findViewById(R.id.textViewLogin).setOnClickListener(this);
 
-        progressDialog = new ProgressDialog(SignUpActivity.this);
+        sessionManager = new SessionManager(this);
 
-        roleSelected = getIntent().getStringExtra("roleSelected");
+        progressDialog = new ProgressDialog(SignUpActivity.this);
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(this,RoleSelectionActivity.class));
     }
 
     @Override
@@ -53,7 +61,6 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
             case R.id.textViewLogin:
                 Intent intent = new Intent(this, LoginActivity.class);
-                intent.putExtra("roleSelected", roleSelected);
                 startActivity(intent);
                 break;
         }
@@ -97,7 +104,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         progressDialog.setMessage("Signing Up...");
         progressDialog.show();
 
-        if (roleSelected.equals("mentee")) {
+        if (sessionManager.getRoleSelected().equals("mentee")) {
             call = RetrofitClient
                     .getInstance()
                     .getApi()
@@ -109,36 +116,37 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                     .createMentor(name, email, password);
         }
 
-        call.enqueue(new Callback<DefaultResponse>() {
+        call.enqueue(new Callback<SignUpResponse>() {
             @Override
-            public void onResponse(Call<DefaultResponse> call, Response<DefaultResponse> response) {
+            public void onResponse(Call<SignUpResponse> call, Response<SignUpResponse> response) {
                 progressDialog.dismiss();
 
                 if (response.code() == 200) {
-                    DefaultResponse defaultResponse = response.body();
-                    if (defaultResponse.getSuccess() == true) {
-                        if (roleSelected.equals("mentee")) {
+                    SignUpResponse signUpResponse = response.body();
+                    if (signUpResponse.getSuccess()) {
+                        if (sessionManager.getRoleSelected().equals("mentee")) {
+                            sessionManager.setUserId(signUpResponse.getUserId());
+                            sessionManager.setAuthToken(signUpResponse.getAuthToken());
+                            sessionManager.setLogInStatus(true);
                             Intent intent = new Intent(SignUpActivity.this, MenteeDashboardActivity.class);
-                            intent.putExtra("usedId", defaultResponse.getUserId());
-                            intent.putExtra("authToken", defaultResponse.getAuthToken());
                             startActivity(intent);
                             finish();
                         } else {
-                            Toast.makeText(SignUpActivity.this, defaultResponse.getMsg() + "\nComing soon.", Toast.LENGTH_SHORT).show();
-                            /*Intent intent = new Intent(LoginActivity.this, MentorDashboardActivity.class);
-                            intent.putExtra("usedId", loginResponse.getUserId());
-                            intent.putExtra("authToken", loginResponse.getAuthToken());
+                            sessionManager.setUserId(signUpResponse.getUserId());
+                            sessionManager.setAuthToken(signUpResponse.getAuthToken());
+                            sessionManager.setLogInStatus(true);
+                            Intent intent = new Intent(SignUpActivity.this, FragmentContainerActivity.class);
                             startActivity(intent);
-                            finish();*/
+                            finish();
                         }
                     } else
-                        Toast.makeText(SignUpActivity.this, defaultResponse.getMsg(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SignUpActivity.this, signUpResponse.getMsg(), Toast.LENGTH_SHORT).show();
                 } else
                     Toast.makeText(SignUpActivity.this, "Unknown error\nTry again", Toast.LENGTH_SHORT).show();
             }
 
             @Override
-            public void onFailure(Call<DefaultResponse> call, Throwable t) {
+            public void onFailure(Call<SignUpResponse> call, Throwable t) {
                 progressDialog.dismiss();
                 Toast.makeText(SignUpActivity.this, "Connection error\nTry again", Toast.LENGTH_SHORT).show();
             }

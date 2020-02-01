@@ -3,7 +3,7 @@ package com.example.mentorme.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class DefaultResponse {
+public class SignUpResponse {
 
     @SerializedName("success")
     @Expose

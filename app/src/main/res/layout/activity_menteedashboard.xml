@@ -50,6 +50,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start|left"
         android:fitsSystemWindows="true"
+        app:headerLayout="@layout/layout_header"
         app:itemTextAppearance="@style/NDItemFontStyle"
         app:menu="@menu/menu_navigationdrawer" />
 

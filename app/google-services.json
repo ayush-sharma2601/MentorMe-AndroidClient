@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "310781077201",
+    "firebase_url": "https://mentorme-efa7c.firebaseio.com",
+    "project_id": "mentorme-efa7c",
+    "storage_bucket": "mentorme-efa7c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:310781077201:android:e01c7b32003fa600b407f0",
+        "android_client_info": {
+          "package_name": "com.example.mentorme"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "310781077201-tmsaqvqd3hsvi3l0hcl2ljr74eihm6va.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.mentorme",
+            "certificate_hash": "dd6a265e6133151e844158af605ffd6b1000f31f"
+          }
+        },
+        {
+          "client_id": "310781077201-7bsolgp5sn0f2lffeog17of45c8imsg9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyClK2qeQAIwwK_W-T9qO0470kHKEA4QReI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "310781077201-7bsolgp5sn0f2lffeog17of45c8imsg9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
